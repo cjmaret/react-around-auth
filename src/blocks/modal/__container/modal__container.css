@@ -1,0 +1,11 @@
+.modal__container {
+    width: 530px;
+    display: flex;
+    flex-direction: column;
+}
+
+@media only screen and (max-width: 550px) {
+    .modal__container {
+        width: 282px;
+    }
+}
