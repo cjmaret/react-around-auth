@@ -1,0 +1,45 @@
+.modal__container_type_info-tooltip {
+    max-width: 530px;
+}
+
+.info-tooltip {
+    max-width: 430px;
+    width: 89.95%;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    margin: 0 auto;
+}
+
+.info-tooltip__image {
+    display: block;
+    margin: 60px auto 32px auto;
+}
+
+.info-tooltip__title {
+    max-width: 358px;
+    width: 83.25%;
+    font-weight: 900;
+    font-size: 24px;
+    line-height: 29.05px;
+    text-align: center;
+    color: #000000;
+    margin: 0 auto 60px auto;
+}
+
+@media screen and (max-width: 550px) {
+    .modal__container_type_info-tooltip {
+        width: 100%;
+    }
+
+    .modal__close-icon_type_info-tooltip {
+        width: 45px;
+        height: 45px;
+        margin: 0 auto;
+        margin-bottom: 20px;
+    }
+
+    .info-tooltip__title {
+        font-size: 20px;
+        line-height: 24.2px;
+    }
+}
