@@ -1,0 +1,12 @@
+@import url('./_type/header__info-group_type_mobile.css');
+
+.header__info-group {
+    display: flex;
+}
+
+@media only screen and (max-width: 920px) {
+    .header__info-group{
+        margin-right: 20px;
+    }
+}
+

@@ -1,5 +1,6 @@
+/* eslint-disable no-restricted-globals */
 import React from "react";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, useHistory } from "react-router-dom";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -13,8 +14,11 @@ import Register from "./Register";
 import api from "../utils/api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import InfoTooltip from "./InfoTooltip";
+import ProtectedRoute from "./ProtectedRoute";
+import * as auth from "../auth.js";
 
 function App() {
+  const history = useHistory();
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
     React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
@@ -30,6 +34,8 @@ function App() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [cardToDelete, setCardToDelete] = React.useState();
   const [loggedIn, setloggedIn] = React.useState(true);
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
   React.useEffect(() => {
     api
@@ -39,6 +45,20 @@ function App() {
       })
       .catch((err) => console.log(err));
   }, []);
+
+  React.useEffect(() => {
+    // handleTokenCheck();
+    console.log(email);
+    console.log(password);
+  });
+
+  // function handleTokenCheck() {
+  //   if (localStorage.getItem("token")) {
+  //     const jwt = localStorage.getItem("jwt");
+
+  //     auth.checkToken(jwt).then((res) => {});
+  //   }
+  // }
 
   function handleEditProfileClick() {
     setIsLoading(false);
@@ -104,8 +124,45 @@ function App() {
       .catch((err) => console.log(err));
   }
 
-  function handleRegisterSubmit() {
+  function handleEmailChange(e) {
+    setEmail(e.target.value);
+  }
+
+  function handlePasswordChange(e) {
+    setPassword(e.target.value);
+  }
+
+  function handleRegisterSubmit(e) {
+    e.preventDefault();
+    auth.register(email, password)
+    .then((res) => {
+      if (res) {
+        history.push("/login");
+      } else {
+        console.log("Something went wrong");
+      }
+    });
     setIsInfoTooltipPopupOpen(true);
+  }
+
+  function handleLoginSubmit(e) {
+    e.preventDefault();
+    auth
+      .authorize(email, password)
+      .then((data) => {
+        if (data.token) {
+          setEmail("");
+          setPassword("");
+          handleLogin();
+          history.push("/");
+        }
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    setloggedIn(true);
   }
 
   React.useEffect(() => {
@@ -157,8 +214,8 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <Switch>
-        <Route path="/homepage">
-          <Header loggedIn={loggedIn} pageLink="/login" linkTitle="Log out"/>
+        <ProtectedRoute exact path="/" loggedIn={loggedIn}>
+          <Header loggedIn={loggedIn} pageLink="/login" linkTitle="Log out" />
           <Main
             onCardClick={handleCardClick}
             onEditProfileClick={handleEditProfileClick}
@@ -199,12 +256,28 @@ function App() {
             onRenderLoading={handleChangeButtonText}
           />
           <ImagePopup card={selectedCard} onClose={closeAllPopups} />
-        </Route>
+        </ProtectedRoute>
         <Route path="/login">
-          <Login />
+          <Login
+            email={email}
+            password={password}
+            setEmail={setEmail}
+            setPassword={setPassword}
+            onEmailChange={handleEmailChange}
+            onPasswordChange={handlePasswordChange}
+            onLoginSubmit={handleLoginSubmit}
+          />
         </Route>
         <Route path="/register">
-          <Register onRegisterSubmit={handleRegisterSubmit} />
+          <Register
+            email={email}
+            password={password}
+            setEmail={setEmail}
+            setPassword={setPassword}
+            onEmailChange={handleEmailChange}
+            onPasswordChange={handlePasswordChange}
+            onRegisterSubmit={handleRegisterSubmit}
+          />
           <InfoTooltip
             isOpen={isInfoTooltipPopupOpen}
             onClose={closeAllPopups}

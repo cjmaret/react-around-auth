@@ -1,12 +1,13 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import logo from "../images/logo.svg";
 import HamburgerMenuIcon from "../images/hamburger_icon_white.svg";
 import CloseMenuIcon from "../images/close-icon.svg";
 
 function Header(props) {
+  const history = useHistory();
   const [mobileWidth, setMobileWidth] = React.useState(false);
-  const [ismobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   React.useEffect(() => {
     function checkWidth() {
@@ -23,7 +24,13 @@ function Header(props) {
   });
 
   function handleHamburgeMenuClick() {
-    setIsMobileMenuOpen(!ismobileMenuOpen);
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  }
+
+  function signOut() {
+    localStorage.removeItem("jwt");
+    console.log('jwt removed');
+    history.push("/login");
   }
 
   return (
@@ -32,8 +39,12 @@ function Header(props) {
         <img className="logo" src={logo} alt="logo" />
         {props.loggedIn && mobileWidth && (
           <img
-            className="header__hamburger-logo"
-            src={!ismobileMenuOpen ? HamburgerMenuIcon : CloseMenuIcon}
+            className={`${
+              mobileWidth && isMobileMenuOpen
+                ? "header__close-icon"
+                : "header__hamburger-icon"
+            }`}
+            src={!isMobileMenuOpen ? HamburgerMenuIcon : CloseMenuIcon}
             alt=""
             onClick={handleHamburgeMenuClick}
           />
@@ -43,7 +54,7 @@ function Header(props) {
         className={`header__info-group ${
           mobileWidth && props.loggedIn && "header__info-group_type_mobile"
         } ${
-          mobileWidth && !ismobileMenuOpen && props.loggedIn && "mobile-menu"
+          mobileWidth && !isMobileMenuOpen && props.loggedIn && "mobile-menu"
         }`}
       >
         {props.loggedIn && <p className="header__email">cjmaret@gmail.com</p>}
@@ -56,6 +67,7 @@ function Header(props) {
               : "header__link_type_white"
           }`}
           to={props.pageLink}
+          onClick={signOut}
         >
           {props.linkTitle}
         </Link>

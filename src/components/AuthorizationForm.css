@@ -35,6 +35,7 @@
     border-bottom: solid 2px #CCCCCC;
     height: 27px;
     background-color: transparent;
+    color: white;
 }
 
 .auth-container__input::placeholder {
@@ -43,6 +44,10 @@
     line-height: 16.94px;
     margin-bottom: 13px;
     padding: 13px 0;
+}
+
+.auth-container__input:focus {
+    outline: none;
 }
 
 .auth-container__submit-button {
@@ -59,17 +64,33 @@
     text-align: center;
     color: #000000;
     cursor: pointer;
+    transition: opacity 0.4s ease;
+}
+
+.auth-container__submit-button:hover {
+    opacity: 0.85;
+}
+
+.lower-flex-container {
+    display: flex;
+    flex-direction: column;
 }
 
 .auth-container__switch-link {
-    display: block;
-    width: 100%;
+    position: relative;
+    display: inline;
+    margin: 0 auto;
     font-weight: 400;
     font-size: 14px;
     line-height: 16.94px;
     text-align: center;
     text-decoration: none;
     color: #FFFFFF;
+    transition: opacity 0.4s ease;
+}
+
+.auth-container__switch-link:hover {
+    opacity: 0.6;
 }
 
 @media only screen and (max-width: 320px) {
