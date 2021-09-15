@@ -5,7 +5,11 @@ import AuthorizationForm from "./AuthorizationForm";
 function Login(props) {
   return (
     <>
-      <Header linkTitle="Sign up" pageLink="./register" />
+      <Header
+        linkTitle="Sign up"
+        pageLink="./register"
+        setIsInfoTooltipPopupOpen={props.setIsInfoTooltipPopupOpen}
+      />
       <AuthorizationForm
         title="Log in"
         buttonTitle="Log in"

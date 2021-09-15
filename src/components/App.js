@@ -33,9 +33,16 @@ function App() {
   const [cards, setCards] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [cardToDelete, setCardToDelete] = React.useState();
-  const [loggedIn, setloggedIn] = React.useState(true);
+  const [isSuccess, setIsSuccess] = React.useState(true);
+  const [loggedIn, setLoggedIn] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [headerEmail, setHeaderEmail] = React.useState();
+
+  React.useEffect(() => {
+    const localEmailAddress = JSON.parse(localStorage.getItem('email address'));
+    setHeaderEmail(localEmailAddress);
+  }, []);
 
   React.useEffect(() => {
     api
@@ -47,18 +54,24 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    // handleTokenCheck();
-    console.log(email);
-    console.log(password);
+    handleTokenCheck();
   });
 
-  // function handleTokenCheck() {
-  //   if (localStorage.getItem("token")) {
-  //     const jwt = localStorage.getItem("jwt");
+  function handleTokenCheck() {
+    if (localStorage.getItem("token")) {
+      const token = localStorage.getItem("token");
 
-  //     auth.checkToken(jwt).then((res) => {});
-  //   }
-  // }
+      auth.checkToken(token).then((res) => {
+        if (!res) {
+          return res.status(400).send({
+            message: "Token not provided or provided in the wrong format",
+          });
+        }
+        setLoggedIn(true);
+        history.push("/");
+      });
+    }
+  }
 
   function handleEditProfileClick() {
     setIsLoading(false);
@@ -125,6 +138,8 @@ function App() {
   }
 
   function handleEmailChange(e) {
+    localStorage.setItem('email address', JSON.stringify(e.target.value));
+    setHeaderEmail(e.target.value);
     setEmail(e.target.value);
   }
 
@@ -134,15 +149,26 @@ function App() {
 
   function handleRegisterSubmit(e) {
     e.preventDefault();
-    auth.register(email, password)
-    .then((res) => {
+    auth.register(email, password).then((res) => {
       if (res) {
-        history.push("/login");
+        setIsSuccess(true);
+        setIsInfoTooltipPopupOpen(true);
+        setTimeout(() => {
+          history.push("/login");
+        }, 2000);
+        setEmail("");
+        setPassword("");
       } else {
+        setIsSuccess(false);
+        setIsInfoTooltipPopupOpen(true);
         console.log("Something went wrong");
       }
     });
-    setIsInfoTooltipPopupOpen(true);
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    setLoggedIn(true);
   }
 
   function handleLoginSubmit(e) {
@@ -153,16 +179,19 @@ function App() {
         if (data.token) {
           setEmail("");
           setPassword("");
-          handleLogin();
+          handleLogin(e);
           history.push("/");
         }
       })
       .catch((err) => console.log(err));
   }
 
-  function handleLogin(e) {
+  function handleLogoutSubmit(e) {
     e.preventDefault();
-    setloggedIn(true);
+    localStorage.removeItem("token");
+    localStorage.removeItem("email address");
+    setLoggedIn(false);
+    history.push("/login");
   }
 
   React.useEffect(() => {
@@ -215,7 +244,13 @@ function App() {
     <CurrentUserContext.Provider value={currentUser}>
       <Switch>
         <ProtectedRoute exact path="/" loggedIn={loggedIn}>
-          <Header loggedIn={loggedIn} pageLink="/login" linkTitle="Log out" />
+          <Header
+            loggedIn={loggedIn}
+            pageLink=""
+            linkTitle="Log out"
+            headerEmail={headerEmail}
+            onLogoutSubmit={handleLogoutSubmit}
+          />
           <Main
             onCardClick={handleCardClick}
             onEditProfileClick={handleEditProfileClick}
@@ -266,6 +301,7 @@ function App() {
             onEmailChange={handleEmailChange}
             onPasswordChange={handlePasswordChange}
             onLoginSubmit={handleLoginSubmit}
+            setIsInfoTooltipPopupOpen={setIsInfoTooltipPopupOpen}
           />
         </Route>
         <Route path="/register">
@@ -277,8 +313,10 @@ function App() {
             onEmailChange={handleEmailChange}
             onPasswordChange={handlePasswordChange}
             onRegisterSubmit={handleRegisterSubmit}
+            setIsInfoTooltipPopupOpen={setIsInfoTooltipPopupOpen}
           />
           <InfoTooltip
+            isSuccess={isSuccess}
             isOpen={isInfoTooltipPopupOpen}
             onClose={closeAllPopups}
           />

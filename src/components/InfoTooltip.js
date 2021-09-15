@@ -1,10 +1,9 @@
 import React from "react";
-import "./InfoTooltip.css";
 import ImageSuccess from "../images/image-success.svg";
 import ImageFailure from "../images/image-failure.svg";
 
 function InfoTooltip(props) {
-  const [isSuccess, setIsSuccess] = React.useState(true);
+  
 
   React.useEffect(() => {
     function close(e) {
@@ -41,11 +40,11 @@ function InfoTooltip(props) {
           <div className="info-tooltip">
             <img
               className="info-tooltip__image"
-              src={isSuccess ? ImageSuccess : ImageFailure}
+              src={props.isSuccess ? ImageSuccess : ImageFailure}
               alt=""
             />
             <h2 className="info-tooltip__title">
-              {isSuccess
+              {props.isSuccess
                 ? "Success! You have now been registered."
                 : "Oops, something went wrong! Please try again."}
             </h2>

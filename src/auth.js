@@ -10,31 +10,31 @@ export const register = (email, password) => {
     body: JSON.stringify({ email, password }),
   })
     .then((response) => {
-      return response.json();
+        if (response.ok) {
+            return response.json();
+        } else {
+            return;
+        }
     })
     .then((res) => {
       return res;
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 };
 
-export const authorize = (identifier, password) => {
+export const authorize = (email, password) => {
   return fetch(`${BASE_URL}/signin`, {
     method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ identifier, password }),
+    body: JSON.stringify({ email, password }),
   })
     .then((response) => response.json())
     .then((data) => {
-        console.log(data);
       if (data.token) {
         localStorage.setItem("token", data.token);
-        console.log(data.token);
         return data;
       } else {
         return;

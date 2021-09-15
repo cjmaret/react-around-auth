@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import logo from "../images/logo.svg";
 import HamburgerMenuIcon from "../images/hamburger_icon_white.svg";
 import CloseMenuIcon from "../images/close-icon.svg";
@@ -27,10 +27,10 @@ function Header(props) {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   }
 
-  function signOut() {
-    localStorage.removeItem("jwt");
-    console.log('jwt removed');
-    history.push("/login");
+  function handleLinkClick(e) {
+    e.preventDefault();
+    props.setIsInfoTooltipPopupOpen(false);
+    history.push(props.pageLink);
   }
 
   return (
@@ -57,8 +57,8 @@ function Header(props) {
           mobileWidth && !isMobileMenuOpen && props.loggedIn && "mobile-menu"
         }`}
       >
-        {props.loggedIn && <p className="header__email">cjmaret@gmail.com</p>}
-        <Link
+        {props.loggedIn && <p className="header__email">{props.headerEmail}</p>}
+        <button
           className={`header__link ${
             mobileWidth && props.loggedIn && "header__link_type_mobile"
           } ${
@@ -66,11 +66,10 @@ function Header(props) {
               ? "header__link_type_grey"
               : "header__link_type_white"
           }`}
-          to={props.pageLink}
-          onClick={signOut}
+          onClick={props.loggedIn ? props.onLogoutSubmit : handleLinkClick}
         >
           {props.linkTitle}
-        </Link>
+        </button>
       </div>
     </header>
   );

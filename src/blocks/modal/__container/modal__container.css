@@ -1,3 +1,5 @@
+@import url('./_type/modal__container_type_info-tooltip.css');
+
 .modal__container {
     width: 530px;
     display: flex;

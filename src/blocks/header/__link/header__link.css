@@ -10,6 +10,9 @@
     height: auto;
     margin-top: 10px;
     transition: opacity 0.4s ease;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
 }
 
 .header__link:hover {

@@ -1,12 +1,11 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
-import "./AuthorizationForm.css";
 
 function AuthorizationForm(props) {
 
   return (
     <form className="auth-container" onSubmit={props.onAuthorizationSubmit}>
-      <div className="upper-flex-container">
+      <div className="auth-container__upper-flex-container">
         <h2 className="auth-container__title">{props.title}</h2>
         <div className="auth-container__inputs">
           <div className="auth-container__input-group">
@@ -26,7 +25,7 @@ function AuthorizationForm(props) {
           </div>
           <div className="auth-container__input-group">
             <input
-              type="text"
+              type="password"
               name="password"
               value={props.password}
               id="auth-container__password-input"
@@ -41,7 +40,7 @@ function AuthorizationForm(props) {
           </div>
         </div>
       </div>
-      <div className="lower-flex-container">
+      <div className="auth-container__lower-flex-container">
         <button
           type="submit"
           className="auth-container__submit-button"
