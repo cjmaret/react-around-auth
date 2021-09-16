@@ -19,39 +19,37 @@ function PopupWithForm(props) {
   }
 
   return (
-    <>
-      <div
-        className={`modal modal_type_${props.name} ${
-          props.isOpen ? "modal_open" : ""
-        }`}
-        onClick={handleClickOutside}
-      >
-        <div className="modal__container">
+    <div
+      className={`modal modal_type_${props.name} ${
+        props.isOpen ? "modal_open" : ""
+      }`}
+      onClick={handleClickOutside}
+    >
+      <div className="modal__container">
+        <button
+          className={`modal__close-icon modal__close-icon_type_${props.name}`}
+          type="button"
+          aria-label="close button"
+          onClick={props.onClose}
+        ></button>
+        <form
+          className={`edit-box edit-box_type_${props.name}`}
+          name={`form-${props.name}`}
+          onSubmit={props.onSubmit}
+        >
+          <h2 className="edit-box__title">{props.title}</h2>
+          {props.children}
           <button
-            className={`modal__close-icon modal__close-icon_type_${props.name}`}
-            type="button"
-            aria-label="close button"
-            onClick={props.onClose}
-          ></button>
-          <form
-            className={`edit-box edit-box_type_${props.name}`}
-            name={`form-${props.name}`}
-            onSubmit={props.onSubmit}
+            className="edit-box__button edit-box__button_edit"
+            type="submit"
+            aria-label="save button"
+            data-textcontent="Save"
           >
-            <h2 className="edit-box__title">{props.title}</h2>
-            {props.children}
-            <button
-              className="edit-box__button edit-box__button_edit"
-              type="submit"
-              aria-label="save button"
-              data-textcontent="Save"
-            >
-              {props.isLoading ? props.loadingText : props.buttonText}
-            </button>
-          </form>
-        </div>
+            {props.isLoading ? props.loadingText : props.buttonText}
+          </button>
+        </form>
       </div>
-    </>
+    </div>
   );
 }
 

@@ -15,7 +15,7 @@ import api from "../utils/api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import InfoTooltip from "./InfoTooltip";
 import ProtectedRoute from "./ProtectedRoute";
-import * as auth from "../auth.js";
+import * as auth from "../utils/auth.js";
 
 function App() {
   const history = useHistory();
@@ -40,7 +40,7 @@ function App() {
   const [headerEmail, setHeaderEmail] = React.useState();
 
   React.useEffect(() => {
-    const localEmailAddress = JSON.parse(localStorage.getItem('email address'));
+    const localEmailAddress = JSON.parse(localStorage.getItem("email address"));
     setHeaderEmail(localEmailAddress);
   }, []);
 
@@ -55,22 +55,89 @@ function App() {
 
   React.useEffect(() => {
     handleTokenCheck();
-  });
+  }, []);
 
   function handleTokenCheck() {
     if (localStorage.getItem("token")) {
       const token = localStorage.getItem("token");
 
-      auth.checkToken(token).then((res) => {
-        if (!res) {
-          return res.status(400).send({
-            message: "Token not provided or provided in the wrong format",
-          });
-        }
-        setLoggedIn(true);
-        history.push("/");
-      });
+      auth
+        .checkToken(token)
+        .then((res) => {
+          if (!res) {
+            return res.status(400).send({
+              message: "Token not provided or provided in the wrong format",
+            });
+          }
+          setLoggedIn(true);
+          history.push("/");
+        })
+        .catch((err) => console.log(err));
     }
+  }
+
+  function handleEmailChange(e) {
+    localStorage.setItem("email address", JSON.stringify(e.target.value));
+    setHeaderEmail(e.target.value);
+    setEmail(e.target.value);
+  }
+
+  function handlePasswordChange(e) {
+    setPassword(e.target.value);
+  }
+
+  function handleRegisterSubmit(e) {
+    e.preventDefault();
+    auth
+      .register(email, password)
+      .then((res) => {
+        if (res) {
+          setIsSuccess(true);
+          setIsInfoTooltipPopupOpen(true);
+          setTimeout(() => {
+            history.push("/login");
+            setIsInfoTooltipPopupOpen(false);
+          }, 2000);
+          setEmail("");
+          setPassword("");
+        } else {
+          setIsSuccess(false);
+          setIsInfoTooltipPopupOpen(true);
+          setTimeout(() => {
+            setIsInfoTooltipPopupOpen(false);
+          }, 2000);
+          console.log("Something went wrong");
+        }
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    setLoggedIn(true);
+  }
+
+  function handleLoginSubmit(e) {
+    e.preventDefault();
+    auth
+      .authorize(email, password)
+      .then((data) => {
+        if (data.token) {
+          setEmail("");
+          setPassword("");
+          handleLogin(e);
+          history.push("/");
+        }
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function handleLogoutSubmit(e) {
+    e.preventDefault();
+    localStorage.removeItem("token");
+    localStorage.removeItem("email address");
+    setLoggedIn(false);
+    history.push("/login");
   }
 
   function handleEditProfileClick() {
@@ -135,63 +202,6 @@ function App() {
         closeAllPopups();
       })
       .catch((err) => console.log(err));
-  }
-
-  function handleEmailChange(e) {
-    localStorage.setItem('email address', JSON.stringify(e.target.value));
-    setHeaderEmail(e.target.value);
-    setEmail(e.target.value);
-  }
-
-  function handlePasswordChange(e) {
-    setPassword(e.target.value);
-  }
-
-  function handleRegisterSubmit(e) {
-    e.preventDefault();
-    auth.register(email, password).then((res) => {
-      if (res) {
-        setIsSuccess(true);
-        setIsInfoTooltipPopupOpen(true);
-        setTimeout(() => {
-          history.push("/login");
-        }, 2000);
-        setEmail("");
-        setPassword("");
-      } else {
-        setIsSuccess(false);
-        setIsInfoTooltipPopupOpen(true);
-        console.log("Something went wrong");
-      }
-    });
-  }
-
-  function handleLogin(e) {
-    e.preventDefault();
-    setLoggedIn(true);
-  }
-
-  function handleLoginSubmit(e) {
-    e.preventDefault();
-    auth
-      .authorize(email, password)
-      .then((data) => {
-        if (data.token) {
-          setEmail("");
-          setPassword("");
-          handleLogin(e);
-          history.push("/");
-        }
-      })
-      .catch((err) => console.log(err));
-  }
-
-  function handleLogoutSubmit(e) {
-    e.preventDefault();
-    localStorage.removeItem("token");
-    localStorage.removeItem("email address");
-    setLoggedIn(false);
-    history.push("/login");
   }
 
   React.useEffect(() => {
@@ -315,13 +325,13 @@ function App() {
             onRegisterSubmit={handleRegisterSubmit}
             setIsInfoTooltipPopupOpen={setIsInfoTooltipPopupOpen}
           />
-          <InfoTooltip
+        </Route>
+      </Switch>
+      <InfoTooltip
             isSuccess={isSuccess}
             isOpen={isInfoTooltipPopupOpen}
             onClose={closeAllPopups}
           />
-        </Route>
-      </Switch>
     </CurrentUserContext.Provider>
   );
 }

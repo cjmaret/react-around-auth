@@ -44,7 +44,6 @@ function AuthorizationForm(props) {
         <button
           type="submit"
           className="auth-container__submit-button"
-          onClick={props.onAuthorizationSubmit}
         >
           {props.buttonTitle}
         </button>

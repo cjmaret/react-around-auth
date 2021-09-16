@@ -10,7 +10,7 @@ function ImagePopup(props) {
             }
         };
 
-        window.addEventListener('keydown', close);
+        props.card && window.addEventListener('keydown', close);
 
         return () => window.removeEventListener('keydown', close);
 
