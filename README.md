@@ -1,8 +1,12 @@
-Around the U.S. project on React, featuring authorization and registration.
+# Around the U.S. Front End  
+  
+## Project Description / Functionality:
+This project serves as the frontend to [around-express](https://github.com/cjmaret/around-express). It's built with React, and resembles Web Project 4, but with added authorization and registration features.
 
-This repository will contain your own front-end project on React with added authorization and registration features.
-Start working with your previously built front end code from Sprint 11.
+## Project Technologies/Techniques:
+- React
+- React Router
+- GH Pages
 
-All authorization, registration and token requests must go through to the server running on [https://register.nomoreparties.co](https://register.nomoreparties.co/).
-
-Good luck!
+### ➡️ [GitHub Link](https://github.com/cjmaret/react-around-auth)
+### ➡️ [Link to Back End](https://github.com/cjmaret/around-express)
